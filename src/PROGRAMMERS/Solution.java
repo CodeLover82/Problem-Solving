@@ -6,7 +6,7 @@ public class Solution {
 
     StringBuilder sb; StringTokenizer st;
 
-    public String[] solution(int[][] rectangles) {
+    public void solution() {
         init();
         solve();
     }
