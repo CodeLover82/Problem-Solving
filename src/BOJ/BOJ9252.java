@@ -1,86 +1,108 @@
 package BOJ;
 
 import java.io.*;
-import java.util.*;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class BOJ9252 {
 
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-    static StringBuilder sb = new StringBuilder();
-    static StringTokenizer st = null;
+    static BufferedReader br; static BufferedWriter bw;
+    static StringBuilder sb; static StringTokenizer st;
 
-    static String s1 = null;
-    static String s2 = null;
-    static int[][] dp = new int[1005][1005];
-    static int[][] track = new int[1005][1005];
+    static String str1, str2;
+    static int[][] dp;
+    static int[][] dir;
+    static int m, n;
+
+    static Stack<Character> stack;
 
     public static void main(String[] args) throws IOException {
         init();
 
-        sb.append(func(s1.length() - 1, s2.length() - 1) + "\n");
+        solve();
 
-        StringBuilder tmp_sb = new StringBuilder();
-
-        int a = s1.length() - 1, b = s2.length() - 1;
-        while (a >= 0 && b >= 0) {
-            if (s1.charAt(a) == s2.charAt(b)) tmp_sb.append(s1.charAt(a));
-
-
-            if(track[a][b] == 0)a--;
-            else if (track[a][b] == 2)b--;
-            else {
-                a--;
-                b--;
-            }
-        }
-
-        sb.append(tmp_sb.reverse());
         bw.write(sb.toString());
 
         bw.flush();
-
         bw.close();
         br.close();
     }
 
     static void init() throws IOException {
-        s1 = br.readLine();
-        s2 = br.readLine();
+        br = new BufferedReader(new InputStreamReader(System.in));
+        bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        sb = new StringBuilder(); st = null;
 
-        for (int i = 0; i <= 1000; i++) Arrays.fill(dp[i], -1);
+        str1 = br.readLine();
+        str2 = br.readLine();
+
+        m = str1.length();
+        n = str2.length();
+
+        dp = new int[m + 1][n + 1];
+        dir = new int[m + 1][n + 1];
+
+        stack = new Stack<>();
     }
 
-    static int func(int x, int y) {
-        if (x == 0 && y == 0) {
-            track[x][y] = 1;
+    static void solve() throws IOException {
+        dp[0][0] = str1.charAt(0) == str2.charAt(0) ? 1 : 0;
+        dir[0][0] = str1.charAt(0) == str2.charAt(0) ? 1 : 0;
 
-            if(s1.charAt(x) == s2.charAt(y))return 1;
-            else return 0;
-        }
-
-        if (x < 0 || y < 0) return 0;
-
-        int ret = dp[x][y];
-        if(ret != -1)return ret;
-
-        if (s1.charAt(x) == s2.charAt(y)) {
-            ret = 1 + func(x - 1, y - 1);
-            track[x][y] = 1;
-        } else {
-            int a = func(x - 1, y);
-            int b = func(x, y - 1);
-
-            if (a >= b) {
-                ret = a;
-                track[x][y] = 0;
-            } else {
-                ret = b;
-                track[x][y] = 2;
+        for (int i = 1; i < m; i++) {
+            if (str1.charAt(i) == str2.charAt(0)) {
+                dp[i][0] = 1;
+                dir[i][0] = 1;
+            }
+            else {
+                dp[i][0] = dp[i - 1][0];
+                dir[i][0] = 2;
             }
         }
 
-        return dp[x][y] = ret;
+        for (int j = 1; j < n; j++) {
+            if (str1.charAt(0) == str2.charAt(j)) {
+                dp[0][j] = 1;
+                dir[0][j] = 1;
+            }
+            else {
+                dp[0][j] = dp[0][j - 1];
+                dir[0][j] = 0;
+            }
+        }
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if(str1.charAt(i) == str2.charAt(j)) {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
+                    dir[i][j] = 1;
+                }
+                else {
+                    dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+                    if(dp[i][j] == dp[i - 1][j])dir[i][j] = 2;
+                    else dir[i][j] = 0;
+                }
+            }
+        }
+
+        sb.append(dp[m - 1][n - 1] + "\n");
+
+        int i = m - 1, j = n - 1;
+        while (i >= 0 && j >= 0) {
+            if (dir[i][j] == 1) {
+                stack.push(str1.charAt(i));
+                i--;
+                j--;
+            }
+            else if (dir[i][j] == 0) j--;
+            else i--;
+        }
+
+        while (!stack.isEmpty()) {
+            sb.append(stack.peek());
+            stack.pop();
+        }
+
     }
 
 }

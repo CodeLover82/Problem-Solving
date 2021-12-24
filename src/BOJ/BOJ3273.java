@@ -1,7 +1,10 @@
 package BOJ;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.StringTokenizer;
 
 public class BOJ3273 {
 

@@ -1,7 +1,7 @@
 package BOJ;
 
-import java.util.*;
 import java.io.*;
+import java.util.StringTokenizer;
 
 public class BOJ10830 {
 
